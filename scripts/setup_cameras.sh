@@ -161,7 +161,7 @@ setup_ov2312(){
 }
 
 setup_imx219(){
-    IMX219_CAM_FMT='[fmt:SRGGB8_1X8/1920x1080]'
+    IMX219_CAM_FMT='[fmt:SRGGB10_1X10/1640x1232]'
     for media_id in {0..1}; do
     for name in `media-ctl -d $media_id -p | grep entity | grep imx219 | cut -d ' ' -f 5`; do
         CAM_SUBDEV=`media-ctl -d $media_id -p -e "imx219 $name" | grep v4l-subdev | awk '{print $4}'`

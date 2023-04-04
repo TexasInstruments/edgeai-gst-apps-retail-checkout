@@ -1,0 +1,39 @@
+title: "Food Recognition"
+log_level: 2
+inputs:
+    input0: # 720p USB camera, e.g. logitech c270 or similar with that resolution capability
+        source: /dev/video2
+        format: jpeg
+        width: 1280
+        height: 720
+        framerate: 30
+    input1: #IMX219 with default settings. Run camera setup script under scripts
+        source: /dev/video2
+        width: 1920
+        height: 1080
+        format: rggb
+        subdev-id: 2
+        framerate: 30
+    input2: #IMX219 w/ 1640x1232 RGGB10. Run camera setup script in retail-shopping
+        source: /dev/video2
+        width: 1640
+        height: 1232
+        format: rggb10
+        subdev-id: 2
+        framerate: 30
+
+models:
+    model0:
+        model_path: /home/root/edgeai-gst-apps-retail-checkout/retail-shopping/food-detection-model-mobv2ssd/
+        viz_threshold: 0.6
+
+outputs:
+    output0:
+        sink: kmssink
+        width: 1920
+        height: 1080
+        overlay-performance: True
+
+
+flows:
+    flow0: [input0,model0,output0,[320,180,1280,720]]

@@ -1,0 +1,58 @@
+
+common:
+    target_module: 'vision'
+    task_type: 'detection'
+    target_device: 'TDA4VM'
+    # run_name can be any string
+    # if {date-time} is given in run_name it will be considered special.
+    # will be replaced with datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_name: '{date-time}'
+
+dataset:
+    # enable/disable dataset loading
+    enable: True #False
+    # max_num_files: [750, 250] #None
+
+    # Object Detection Dataset Examples:
+    # -------------------------------------
+    # Example 1, (known datasets): 'widerface_detection', 'pascal_voc0712', 'coco_detection', 'udacity_selfdriving', 'tomato_detection', 'tiscapes2017_driving'
+    # dataset_name: widerface_detection
+    # -------------------------------------
+    # Example 2, give a dataset name and input_data_path.
+    # input_data_path could be a path to zip file, tar file, folder OR http, https link to zip or tar files
+    # for input_data_path these are provided with this repository as examples:
+    #    'http://software-dl.ti.com/jacinto7/esd/modelzoo/latest/datasets/tiscapes2017_driving.zip'
+    #    'http://software-dl.ti.com/jacinto7/esd/modelzoo/latest/datasets/animal_detection.zip'
+    # -------------------------------------
+    # Example 3, give image folders with annotation files (require list with values for both train and val splits)
+    # dataset_name: coco_detection
+    # input_data_path: ["./data/projects/coco_detection/dataset/train2017",
+    #                        "./data/projects/coco_detection/dataset/val2017"]
+    # input_annotation_path: ["./data/projects/coco_detection/dataset/annotations/instances_train2017.json",
+    #                        "./data/projects/coco_detection/dataset/annotations/instances_val2017.json"]
+    # -------------------------------------
+    dataset_name: food-detection-aug
+    input_data_path: 'data/projects/food-detection-aug'
+
+training:
+    # enable/disable training
+    enable: True #False
+
+    # Object Detection model chosen can be changed here if needed
+    # SSD: #'ssd_mobilenetv2_fpn_lite_mmdet' 'ssd_regnetx_800mf_fpn_bgr_lite_mmdet' #'ssd_regnetx_1p6gf_fpn_bgr_lite_mmdet'
+    # YOLOX:'yolox_nano_lite_mmdet', 'yolox_tiny_lite_mmdet', 'yolox_s_lite_mmdet', 'yolox_m_lite_mmdet'
+    # The following YOLOv5 models will be available only if you have installed edgeai-yolov5 using setup_plugins_gpl.sh
+    # YOLOv5: 'yolov5s6_640_ti_lite', 'yolov5m6_640_ti_lite', 'yolov5l6_640_ti_lite'
+    model_name: 'ssd_mobilenetv2_lite_mmdet'
+
+    training_epochs: 30 #10
+    batch_size: 4 #32
+    learning_rate: 0.002
+    num_gpus: 1 #0 #1 #4
+    #distributed: False
+
+compilation:
+    # enable/disable compilation
+    enable: True #False
+    input_optimization: True
+    tensor_bits: 8 #16 #32
