@@ -1,0 +1,56 @@
+{
+  "categories": [
+    {
+      "id": 0,
+      "name": "apple"
+    },
+    {
+      "id": 1,
+      "name": "banana"
+    },
+    {
+      "id": 2,
+      "name": "cake"
+    },
+    {
+      "id": 3,
+      "name": "chips"
+    },
+    {
+      "id": 4,
+      "name": "corn"
+    },
+    {
+      "id": 5,
+      "name": "fries"
+    },
+    {
+      "id": 6,
+      "name": "grapes"
+    },
+    {
+      "id": 7,
+      "name": "noodles"
+    },
+    {
+      "id": 8,
+      "name": "orange"
+    },
+    {
+      "id": 9,
+      "name": "pringles"
+    },
+    {
+      "id": 10,
+      "name": "rice"
+    },
+    {
+      "id": 11,
+      "name": "salad"
+    },
+    {
+      "id": 12,
+      "name": "soda"
+    }
+]
+}
