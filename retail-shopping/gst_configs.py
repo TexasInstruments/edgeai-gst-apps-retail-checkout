@@ -49,7 +49,7 @@ class CamParams():
             self.input_gst_str = f'v4l2src device={device}  io-mode=dmabuf-import ! video/x-bayer, width={self.width}, height={self.height}, format=rggb10 ! tiovxisp sink_0::device=/dev/v4l-subdev2 sensor-name=SENSOR_SONY_IMX219_RPI dcc-isp-file=/opt/imaging/imx219/dcc_viss_10b_1640x1232.bin sink_0::dcc-2a-file=/opt/imaging/imx219/dcc_2a_10b_1640x1232.bin format-msb=9 ' 
 
             # c280 webcam settings
-        elif cam_name=='usb-720':
+        elif cam_name=='usb-720p':
             self.width = 1280
             self.height = 720
             self.draw_image_width = 960
@@ -59,7 +59,7 @@ class CamParams():
 
             self.input_gst_str = f'v4l2src device={device}  ! image/jpeg,width={self.width},height={self.height} ! jpegdec '
             
-        elif cam_name=='usb-1080':
+        elif cam_name=='usb-1080p':
             self.width = 1920
             self.height = 1080
             self.draw_image_width = 1440
