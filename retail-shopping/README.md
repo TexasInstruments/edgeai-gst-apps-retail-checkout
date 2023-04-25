@@ -8,7 +8,7 @@ Run [run_demo.sh](./run_demo.sh) to run this demo.
 
 This demo runs on the AM62A Starter-Kit EVM. It requires a 1920x1080 HDMI display and a camera. The camera can be an IMX219 module with CSI connection or a 720p/1080p USB camera. Copy the files within this directory (and subdirectories) to the device - it is not important where within the devices file system. 
 
-The run_demo.sh script assumes an IMX219 is attached to the CSI port on the device and that the model to use for inference is at [food-detection-model-mobv2ssd](./food-detection-model-mobv2ssd). If the trained food recognition neural network is not already present at food-detection-model-mobv2ssd, it will be downloaded. The base python file is retail_vision_app.py. The -h tag will print the full readout for command-line options. Additional CLI tags can be added to the run_demo.sh call, which will be passed on to the python command.
+The run_demo.sh script assumes an IMX219 is attached to the CSI port on the device and that the model to use for inference is at [food-detection-model-mobv2ssd](./food-detection-model-mobv2ssd). If the trained food recognition neural network is not already present at food-detection-model-mobv2ssd, it will be downloaded. **The base python file is retail_vision_app.py. The -h tag will print the full readout for command-line options**. Additional CLI tags can be added to the run_demo.sh call, which will be passed on to the python command.
 
 ![](./doc/demo-at-EW.gif)
 
@@ -24,6 +24,10 @@ This demo is written in Python3 and leverages the ONNX runtime with TIDL Executi
 ### Help! The Demo isn't Running!
 
 See the [FAQ](./doc/FAQ.md) 
+
+### Reproducing the demo in full 
+
+See the [guide on reproducing the demo](./doc/REPRODUCE.md) to find all compoents used in the making and displaying of this demo, including the food items the model was trained to recognize as well as mounting hardware.
 
 
 ## Demo Development
