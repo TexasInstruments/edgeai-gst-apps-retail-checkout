@@ -12,3 +12,7 @@ Here's a little FAQ/list of potential hiccups to help:
 * I changed the model and its not working. What do I do?
   * Try testing the model with the other applications in the edgeai-gst-apps, especially optiflow. 
     * Postprocessing plugins can give errors and not tell exactly why (typically coredumps if that is at fault). Often, it's errors in the YAML files describing a model
+* During initialization, the model fails to start and I get a lot of TIDL messages. What should I do?
+  * Recompilation of the model may be necessary. Look at [REPRODUCE.md](./REPRODUCE.md). 
+  * The model may not be present, and needs to be downloaded. This should happen automatically when first running the script
+  * If there are strange errors about OpenVX not initializing, something likely failed to exit gracefully from running previously. Reboot the EVM and try again
