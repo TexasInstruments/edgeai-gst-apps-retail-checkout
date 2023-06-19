@@ -2,6 +2,12 @@
 
 This is the Retail Automation demo on AM62A Processor, which was used at Embedded World 2023 to showcase this new SoC.
 
+## Supported Devices
+
+| **DEVICE**              | **Supported**      |
+| :---:                   | :---:              |
+| AM62A                   | :heavy_check_mark: |
+
 ## How to run this demo
 
 Run [run_demo.sh](./retail-shopping/run_demo.sh) to run this demo. 
