@@ -41,4 +41,4 @@ if [ ! -d ./food-detection-model-mobv2ssd ]; then
     ./download_food_detection_model.sh
 fi
 
-python3 retail_vision_app.py -m ./food-detection-model-mobv2ssd -nl -c imx219 
+python3 retail_vision_app.py -m ./food-detection-model-mobv2ssd -nl -c usb-1080p -d /dev/video-usb-cam0

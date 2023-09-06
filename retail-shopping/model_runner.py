@@ -46,10 +46,10 @@ class ModelRunner():
         else:
             self.params = yaml.safe_load(open(paramsfile, 'r'))
 
-        if not modelfile or not os.path.exists(modelfile):
-            self.modelfile = os.path.join(modeldir, 'model', 'model.onnx')
-        elif self.params['session']['model_path']:
+        if self.params['session']['model_path']:
             self.modelfile = os.path.join(modeldir, self.params['session']['model_path'])
+        elif not modelfile or not os.path.exists(modelfile):
+            self.modelfile = os.path.join(modeldir, 'model', 'model.onnx')
         else: 
             self.modelfile = os.path.join(modeldir, modelfile)
 

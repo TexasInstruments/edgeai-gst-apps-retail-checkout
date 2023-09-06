@@ -31,7 +31,7 @@
 
 # run from the retail-shopping directory
 
-URL=https://software-dl.ti.com/jacinto7/esd/edgeai-marketplace/retail-checkout/food-detection-model-mobv2ssd.tar.gz
+URL=https://software-dl.ti.com/jacinto7/esd/edgeai-marketplace/retail-checkout/9.0/food-detection-model-mobv2ssd.tar.gz
 
 echo "Download model from '$URL'"
 

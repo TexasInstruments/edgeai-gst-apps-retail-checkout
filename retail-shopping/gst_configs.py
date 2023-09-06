@@ -46,7 +46,7 @@ class CamParams():
             self.fps = '30/1'
             self.pixel_format = 'RGB'
 
-            self.input_gst_str = f'v4l2src device={device}  io-mode=dmabuf-import ! video/x-bayer, width={self.width}, height={self.height}, format=rggb10 ! tiovxisp sink_0::device=/dev/v4l-subdev2 sensor-name=SENSOR_SONY_IMX219_RPI dcc-isp-file=/opt/imaging/imx219/dcc_viss_10b_1640x1232.bin sink_0::dcc-2a-file=/opt/imaging/imx219/dcc_2a_10b_1640x1232.bin format-msb=9 ' 
+            self.input_gst_str = f'v4l2src device={device}  io-mode=dmabuf-import ! video/x-bayer, width={self.width}, height={self.height}, format=rggb10 ! tiovxisp sink_0::device=/dev/v4l-rpi-subdev0 sensor-name=SENSOR_SONY_IMX219_RPI dcc-isp-file=/opt/imaging/imx219/linear/dcc_viss_10b_1640x1232.bin sink_0::dcc-2a-file=/opt/imaging/imx219/linear/dcc_2a_10b_1640x1232.bin format-msb=9 ' 
 
             # c280 webcam settings
         elif cam_name=='usb-720p':
