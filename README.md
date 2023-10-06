@@ -10,7 +10,7 @@ This is the Retail Automation demo on AM62A Processor, which was used at Embedde
 
 ## SDK Version
 
-This demo is supported on **EdgeAI SDK Version 8.6**
+This demo is supported on **EdgeAI SDK Version 9.0**
 
 ## How to run this demo
 
