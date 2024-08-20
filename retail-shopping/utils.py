@@ -73,7 +73,7 @@ def get_items_from_tensors(output_boxes_tensor, output_classes_tensor, classes):
     Returns a dictionary of items with item names, costs, and number of the item type found.
     '''
     items = create_empty_item_list(classes)
-    conf_thresh = 0.3
+    conf_thresh = 0.6
 
     for i, out in enumerate(output_boxes_tensor):
         conf = out[-1]
