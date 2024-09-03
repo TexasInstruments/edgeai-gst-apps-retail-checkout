@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #  Copyright (C) 2023 Texas Instruments Incorporated - http://www.ti.com/
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -29,15 +29,19 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# run from the retail-shopping directory
+# move into the current directory so all relative paths work
+DIR=`dirname $0`
+cd $DIR
 
-TAG="10_00_00" # valid options: "10_00_00", "09_00_00" or "" (last for 8.6, the initial release) 
+systemctl stop edgeai-init
+systemctl stop weston
 
-URL=https://software-dl.ti.com/jacinto7/esd/edgeai-marketplace/retail-checkout/$TAG/food-detection-model-mobv2ssd.tar.gz
+# setup the camera
+../scripts/setup_cameras.sh
 
+if [ ! -d ./food-detection-model-mobv2ssd ]; then
+    echo 'Model not found; Downloading food detection model'
+    ./download_food_detection_model.sh
+fi
 
-echo "Download model from '$URL'"
-
-wget --proxy off $URL
-
-tar -xf food-detection-model-mobv2ssd.tar.gz
+python3 retail_vision_app.py -m  ./food-detection-model-mobv2ssd  -c imx219 -d /dev/video-imx219-cam0 -nl 

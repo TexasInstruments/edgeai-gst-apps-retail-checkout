@@ -60,6 +60,7 @@ def parse_args():
     parser.add_argument('-nl', '--list-receipt-short', action='store_false', dest='list_receipt_full', help='display only the items recognized in the receipt image')
     parser.set_defaults(list_receipt_full=False)
 
+    parser.add_argument('-s', '--skip-visualization', action='store_true', dest='skip_visualization', help='Skip visualization of the screen showing ordered items and their totalled prices. This is a slow process')
     args = parser.parse_args()
     pprint(args)
     
@@ -92,30 +93,31 @@ def application_thread(gst_conf:gst_configs.GstBuilder, model_obj:model_runner.M
         drawer.push_to_display(receipt_image)
         print('pull')
         t_start_loop = time.time()
-        sample_tensor, _ = gst_conf.pull_sample(gst_conf.app_in_tensor, loop=True)
-        if not sample_tensor: continue
-
-        print('got sample tensor')
-        # tensor is the output of dlinferer. If so, format is model dependent. View tidlpostproc and tidlinferer to  see how this structure is encoded into a buffer. If there are multiple tensors, there will be offsets. Values below are specific to mobilvenetv2SSD-lite 
+        sample_tensor, _ = gst_conf.pull_sample(gst_conf.app_in_tensor, loop=False)
+        
         t_pre_draw = time.time()
+        if sample_tensor and not args.skip_visualization: 
+            print('got sample tensor')
+            # tensor is the output of dlinferer. If so, format is model dependent. View tidlpostproc and tidlinferer to  see how this structure is encoded into a buffer. If there are multiple tensors, there will be offsets. Values below are specific to mobilvenetv2SSD-lite 
 
-        #decode the tensor
-        num_boxes = 200
-        len_boxes_tensor = num_boxes*5*4 #5-tuple of float32's
-        boxes_data = sample_tensor[0:len_boxes_tensor]
-        boxes_tensor = np.ndarray((num_boxes, 5), np.float32, boxes_data)
+            #decode the tensor
+            num_boxes = 200
+            len_boxes_tensor = num_boxes*5*4 #5-tuple of float32's
+            boxes_data = sample_tensor[0:len_boxes_tensor]
+            boxes_tensor = np.ndarray((num_boxes, 5), np.float32, boxes_data)
 
-        len_classes_tensor = num_boxes*1*8 #1-tuple of int64's
-        #there is an offset for the start of the next tensor. This was found by printf's in postproc plugin
-        classes_data = sample_tensor[model_obj.tensor_class_offset:model_obj.tensor_class_offset+len_classes_tensor]
-        classes_tensor = np.ndarray(len(classes_data)//8, np.int64, classes_data)
+            len_classes_tensor = num_boxes*1*8 #1-tuple of int64's
+            #there is an offset for the start of the next tensor. This was found by printf's in postproc plugin
+            classes_data = sample_tensor[model_obj.tensor_class_offset:model_obj.tensor_class_offset+len_classes_tensor]
+            classes_tensor = np.ndarray(len(classes_data)//8, np.int64, classes_data)
 
-        #extract a list of items from the tensors
-        items = utils.get_items_from_tensors(boxes_tensor, classes_tensor, categories)
-        # pprint(items) #pprint has terrible performance. Showing a dict can  take 50+ ms. Only for debug
+            #extract a list of items from the tensors
+            items = utils.get_items_from_tensors(boxes_tensor, classes_tensor, categories)
+            # pprint(items) #pprint has terrible performance. Showing a dict can  take 50+ ms. Only for debug
 
-        # create the receipt image - output from an FSM
-        receipt_image = fsm.run_fsm(items)
+            # create the receipt image - output from an FSM
+            receipt_image = fsm.run_fsm(items)
+            
         t_final = time.time()
         
         #collect some stats    

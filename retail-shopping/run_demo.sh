@@ -33,6 +33,9 @@
 DIR=`dirname $0`
 cd $DIR
 
+systemctl stop edgeai-init
+systemctl stop weston
+
 # setup the camera
 ../scripts/setup_cameras.sh
 

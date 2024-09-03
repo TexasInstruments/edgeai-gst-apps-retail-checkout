@@ -37,7 +37,7 @@ Gst.init(None)
 
 class CamParams():
 
-    def __init__(self, cam_name, device='/dev/video2'):
+    def __init__(self, cam_name, device='/dev/video-imx219-cam0'):
         if cam_name == 'imx219': 
             self.width = 1640
             self.height = 1232
@@ -46,7 +46,7 @@ class CamParams():
             self.fps = '30/1'
             self.pixel_format = 'RGB'
 
-            self.input_gst_str = f'v4l2src device={device}  io-mode=dmabuf-import ! video/x-bayer, width={self.width}, height={self.height}, format=rggb10 ! tiovxisp sink_0::device=/dev/v4l-rpi-subdev0 sensor-name=SENSOR_SONY_IMX219_RPI dcc-isp-file=/opt/imaging/imx219/linear/dcc_viss_10b_1640x1232.bin sink_0::dcc-2a-file=/opt/imaging/imx219/linear/dcc_2a_10b_1640x1232.bin format-msb=9 ' 
+            self.input_gst_str = f'v4l2src device={device}  io-mode=dmabuf-import ! video/x-bayer, width={self.width}, height={self.height}, format=rggb10 ! tiovxisp sink_0::device=/dev/v4l-imx219-subdev0   sensor-name=SENSOR_SONY_IMX219_RPI dcc-isp-file=/opt/imaging/imx219/linear/dcc_viss_10b_1640x1232.bin sink_0::dcc-2a-file=/opt/imaging/imx219/linear/dcc_2a_10b_1640x1232.bin format-msb=9  ' 
 
             # c280 webcam settings
         elif cam_name=='usb-720p':
@@ -122,6 +122,7 @@ class GstBuilder():
         
         # pipeline to do DL inference on. Requires preprocessing to match model
         gst_str+= f' split_resize. ! video/x-raw, width={model_width}, height={model_height}, format=NV12  '
+
         gst_str += f' ! tiovxdlpreproc data-type=uint8 ! application/x-tensor-tiovx,  channel-order={tensor_format}, tensor-format=RGB, tensor-width={model_width}, tensor-height={model_height} '
         
         if self.preprocess or data_type == 'float32':
@@ -136,22 +137,21 @@ class GstBuilder():
 
         # Enqueue and postprocess the tensor on the original images so boxes are drawn
         gst_str += f' model_out_tensor. ! queue max-size-buffers=2 leaky=2 ! postproc.tensor '
-        gst_str += f' split_resize. ! video/x-raw, width={self.camera_params.draw_image_width}, height={self.camera_params.draw_image_height}, format=NV12 ! postproc.sink  tidlpostproc name=postproc model={model_obj.modeldir}  ! queue leaky=2 max-size-buffers=1 name=queue-mosaicsink0 ! mosaic.sink_0'
+        gst_str += f' split_resize. ! queue max-size-buffers=2 leaky=2 !  video/x-raw, width={self.camera_params.draw_image_width}, height={self.camera_params.draw_image_height}, format=NV12 ! postproc.sink  tidlpostproc name=postproc model={model_obj.modeldir}  ! queue leaky=2 max-size-buffers=2 name=queue-mosaicsink0 ! mosaic.sink_0'
 
         # Provide the tensor to application code via appsink
-        gst_str += f' model_out_tensor. ! queue name=queue-tensor-in leaky=2 max-size-buffers=1 ! appsink name={self.appsink_tensor_name} max-buffers=1 drop=true sync=false  '
-        # gst_str += f' model_out_tensor. ! appsink name={self.appsink_tensor_name} max-buffers=1 drop=true sync=false  '
+        gst_str += f' model_out_tensor. ! queue name=queue-tensor-in leaky=2 max-size-buffers=2 ! appsink name={self.appsink_tensor_name} max-buffers=2 drop=true sync=false  '
 
         # Application output (the receipt iamge) will come from appsrc and go to mosaic
-        gst_str += f' appsrc format=GST_FORMAT_TIME is-live=true block=false  name={self.appsrc_name} ! video/x-raw,  format={self.appsrc_output_format}, width={self.receipt_width}, height={self.receipt_height} ! {video_conv} ! video/x-raw, format=NV12  '
+        gst_str += f' appsrc format=GST_FORMAT_TIME is-live=true block=false  name={self.appsrc_name} !  queue leaky=2 max-size-buffers=2 ! video/x-raw,  format={self.appsrc_output_format}, width={self.receipt_width}, height={self.receipt_height} ! {video_conv} ! video/x-raw, format=NV12  '
 
-        gst_str += f' ! queue name=queue-mosaicsink1 leaky=2 max-size-buffers=1 ! mosaic.sink_1 ' 
+        gst_str += f' ! queue name=queue-mosaicsink1 leaky=2 max-size-buffers=2 ! mosaic.sink_1 ' 
 
         # Create a mosaic to stitch together images from postproc and appsrc
         gst_str += f'  tiovxmosaic name=mosaic '
         gst_str += f'  sink_0::startx="<0>" sink_0::starty="<0>" sink_0::heights="<{self.image_height}>" sink_0::widths="<{self.image_width}>"'
         gst_str += f'  sink_1::startx="<{self.image_width}>" sink_1::starty="<0>" sink_1::heights="<{self.receipt_height}>" sink_1::widths="<{self.receipt_width}>"' 
-        gst_str += f' ! kmssink sync=false driver-name=tidss'
+        gst_str += f' !  video/x-raw,  format=NV12, width=1920, height=1080  ! kmssink sync=false driver-name=tidss force-modesetting=true '
 
 
         self.gst_str = gst_str
